@@ -10,6 +10,7 @@ namespace NeoLoad.Client
         private bool _proxyInUse = false;
         private string _proxySettings = null;
         private string _proxyOverride = null;
+        private string _autoConfigURL = null;
         private int _apiPort = 0;
 
         [DllImport("wininet.dll")]
@@ -24,6 +25,7 @@ namespace NeoLoad.Client
             _proxyInUse = Convert.ToBoolean(registry.GetValue("ProxyEnable"));
             _proxySettings = (string)registry.GetValue("ProxyServer");
             _proxyOverride = (string)registry.GetValue("ProxyOverride");
+            _autoConfigURL = (string)registry.GetValue("AutoConfigURL");
             _apiPort = apiPort;
         }
 
@@ -41,6 +43,10 @@ namespace NeoLoad.Client
                 excluded = proxExclusion;
             }
             registry.SetValue("ProxyOverride", excluded);
+            if (_autoConfigURL != null)
+            {
+                registry.DeleteValue("AutoConfigURL");
+            }
             updateProxySettings();
         }
 
@@ -59,6 +65,10 @@ namespace NeoLoad.Client
                     registry.SetValue("ProxyEnable", 0);
                     registry.SetValue("ProxyServer", "");
                     registry.SetValue("ProxyOverride", "");
+                }
+                if(_autoConfigURL != null)
+                {
+                    registry.SetValue("AutoConfigURL", _autoConfigURL);
                 }
                 updateProxySettings();
             }
